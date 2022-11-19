@@ -1,19 +1,21 @@
 #include <SFML/Graphics.hpp>
-
 #include "ZombieArena.h"
 #include "Player.h"
-#include <iostream>
+#include "TextureHolder.h"
 
 using namespace sf;
-using namespace std;
 
 int main()
 {
+	// Here is the instance of TextureHolder
+	TextureHolder holder;
+
 	// The game will always be in one of four states
 	enum class State { PAUSED, LEVELING_UP, GAME_OVER, PLAYING };
 	// Start with the GAME_OVER state
 	State state = State::GAME_OVER;
 
+	
 	// Get the screen resolution and create an SFML window
 	Vector2f resolution;
 	resolution.x = VideoMode::getDesktopMode().width;
@@ -44,16 +46,17 @@ int main()
 	// Create the background
 	VertexArray background;
 	// Load the texture for our background vertex array
-	Texture textureBackground;
-	textureBackground.loadFromFile("graphics/background_sheet.png");
+	Texture textureBackground = TextureHolder::GetTexture(
+		"graphics/background_sheet.png");
+	
+	// Prepare for a horde of zombies
+	int numZombies;
+	int numZombiesAlive;
+	Zombie* zombies = NULL;
 
 	// The main game loop
-	int count = 0;
 	while (window.isOpen())
 	{
-		count++;
-		if(count%1000==0)
-			cout << "1000" << endl;
 		/*
 		************
 		Handle input
@@ -191,9 +194,17 @@ int main()
 				// Pass the vertex array by reference 
 				// to the createBackground function
 				int tileSize = createBackground(background, arena);
-				
+
 				// Spawn the player in the middle of the arena
 				player.spawn(arena, resolution, tileSize);
+
+				// Create a horde of zombies
+				numZombies = 10;
+
+				// Delete the previously allocated memory (if it exists)
+				delete[] zombies;
+				zombies = createHorde(numZombies, arena);
+				numZombiesAlive = numZombies;
 
 				// Reset the clock so there isn't a frame jump
 				clock.restart();
@@ -229,6 +240,16 @@ int main()
 
 			// Make the view centre around the player				
 			mainView.setCenter(player.getCenter());
+
+			// Loop through each Zombie and update them
+			for (int i = 0; i < numZombies; i++)
+			{
+				if (zombies[i].isAlive())
+				{
+					zombies[i].update(dt.asSeconds(), playerPosition);
+				}
+			}
+
 		}// End updating the scene
 
 		 /*
@@ -247,6 +268,12 @@ int main()
 
 			// Draw the background
 			window.draw(background, &textureBackground);
+
+			// Draw the zombies
+			for (int i = 0; i < numZombies; i++)
+			{
+				window.draw(zombies[i].getSprite());
+			}
 
 			// Draw the player
 			window.draw(player.getSprite());
