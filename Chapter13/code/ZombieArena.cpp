@@ -445,8 +445,8 @@ int main()
 
 				// Prepare thelevel
 				// We will modify the next two lines later
-				arena.width = 1000 * wave;
-				arena.height = 1000 * wave;
+				arena.width = 500 * wave;
+				arena.height = 500 * wave;
 				arena.left = 0;
 				arena.top = 0;
 
@@ -462,7 +462,7 @@ int main()
 				ammoPickup.setArena(arena);
 
 				// Create a horde of zombies
-				numZombies = 5 * wave;
+				numZombies = 2 * wave;
 
 				// Delete the previously allocated memory (if it exists)
 				delete[] zombies;
@@ -735,6 +735,7 @@ int main()
 
 		if (state == State::GAME_OVER)
 		{
+			window.setView(hudView);//
 			window.draw(spriteGameOver);
 			window.draw(gameOverText);
 			window.draw(scoreText);
