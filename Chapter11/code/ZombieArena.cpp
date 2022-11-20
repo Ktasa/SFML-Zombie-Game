@@ -4,7 +4,6 @@
 #include "TextureHolder.h"
 #include "Bullet.h"
 #include "Pickup.h"
-//#include <cmath>
 
 using namespace sf;
 
