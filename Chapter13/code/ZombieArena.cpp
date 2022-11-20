@@ -735,7 +735,7 @@ int main()
 
 		if (state == State::GAME_OVER)
 		{
-			window.setView(hudView);//
+			window.setView(hudView);
 			window.draw(spriteGameOver);
 			window.draw(gameOverText);
 			window.draw(scoreText);
